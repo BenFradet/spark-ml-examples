@@ -1,23 +1,23 @@
-package io.github.benfradet
+package io.github.benfradet.spark.ml.in.action
 
-import org.apache.spark.sql.{SparkSession, Row}
+import org.apache.spark.sql.{SparkSession, Row, SaveMode}
 import org.apache.spark.sql.functions.udf
 
 object DataPreparation {
   def main(args: Array[String]): Unit = {
-    if (args.length < 1) {
-      System.err.println("Usage: DataPreparation <json file>")
+    if (args.length < 2) {
+      System.err.println("Usage: DataPreparation <input file> <output file>")
       System.exit(1)
     }
 
     val spark = SparkSession
       .builder()
-      .appName("Data preparation chapter 7")
+      .appName("Data preparation for chapter 7")
       .getOrCreate()
     import spark.implicits._
 
-    val path = args(0)
-    val events = spark.read.json(path)
+    val inputPath = args(0)
+    val events = spark.read.json(inputPath)
     events.printSchema()
 
     val splitEventUDF = udf(splitEvent)
@@ -25,17 +25,33 @@ object DataPreparation {
       $"actor.login".alias("username"),
       splitEventUDF($"type", $"payload").alias("type")
     )
+    projectedEvents.printSchema()
 
     val groupedEvents = projectedEvents.groupBy("username", "type").count()
+    groupedEvents.printSchema()
 
-    val reshapedEvents = groupedEvents
-      .map(r => (r.getAs[String]("username"),
-        (r.getAs[String]("type"), r.getAs[Long]("count"))))
-      .groupByKey(_._1)
-  }
+    val distinctEventTypes = groupedEvents
+      .select("type")
+      .distinct()
+      .map(_.getString(0))
+      .collect()
+    val pivotedEvents = groupedEvents
+      .groupBy("username")
+      .pivot("type", distinctEventTypes)
+      .sum("count")
+      .na.fill(0L)
+    pivotedEvents.printSchema()
 
-  val makeRow = (kvs: (String, (String, (String, Long)))) => { case (k, vs) =>
+    val outputPath = args(1)
+    pivotedEvents
+      .drop("username")
+      .write
+      .format("csv")
+      .option("header", "true")
+      .mode(SaveMode.Overwrite)
+      .save(outputPath)
 
+    spark.stop()
   }
 
   val splitEvent = (t: String, p: Row) => {
