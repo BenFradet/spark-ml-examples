@@ -24,25 +24,29 @@ object KMeans {
       .option("inferSchema", "true")
       .load(inputPath)
     userActions.printSchema()
+    userActions.show(5, truncate = false)
 
     val assembler = new VectorAssembler()
       .setInputCols(userActions.columns)
       .setOutputCol("features")
 
     val formattedUserActions = assembler.transform(userActions).cache()
+    formattedUserActions.printSchema()
+    formattedUserActions.show(5, truncate = false)
 
-    (2 to 15).foreach { k =>
+    (3 to 8).foreach { k =>
       val kmeans = new KMeans()
         .setK(k)
-        .setSeed(1L)
+        .setMaxIter(20)
+        .setTol(1e-4)
 
       val model = kmeans.fit(formattedUserActions)
 
       val wsse = model.computeCost(formattedUserActions)
       println(s"Within set sum of squared errors for $k clusters = $wsse")
 
-      //println("Cluster centers:")
-      //model.clusterCenters.foreach(println)
+      println("Cluster centers:")
+      model.clusterCenters.foreach(println)
     }
 
     spark.stop()
