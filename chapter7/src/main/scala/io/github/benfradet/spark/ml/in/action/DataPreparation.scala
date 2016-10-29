@@ -1,7 +1,7 @@
 package io.github.benfradet.spark.ml.in.action
 
 import org.apache.spark.sql.{SparkSession, Row, SaveMode}
-import org.apache.spark.sql.functions.udf
+import org.apache.spark.sql.functions._
 
 object DataPreparation {
   def main(args: Array[String]): Unit = {
@@ -19,28 +19,29 @@ object DataPreparation {
     val inputPath = args(0)
     val events = spark.read.json(inputPath)
     events.printSchema()
+    events.show(5, truncate = false)
 
     val splitEventUDF = udf(splitEvent)
     val projectedEvents = events.select(
       $"actor.login".alias("username"),
-      splitEventUDF($"type", $"payload").alias("type")
+      splitEventUDF($"type", $"payload").alias("type"),
+      lit(1L).alias("count")
     )
     projectedEvents.printSchema()
+    projectedEvents.show(5, truncate = false)
 
-    val groupedEvents = projectedEvents.groupBy("username", "type").count()
-    groupedEvents.printSchema()
-
-    val distinctEventTypes = groupedEvents
+    val distinctEventTypes = projectedEvents
       .select("type")
       .distinct()
       .map(_.getString(0))
       .collect()
-    val pivotedEvents = groupedEvents
+    val pivotedEvents = projectedEvents
       .groupBy("username")
       .pivot("type", distinctEventTypes)
       .sum("count")
       .na.fill(0L)
     pivotedEvents.printSchema()
+    pivotedEvents.show(5, truncate = false)
 
     val outputPath = args(1)
     pivotedEvents
@@ -54,19 +55,18 @@ object DataPreparation {
     spark.stop()
   }
 
-  val splitEvent = (t: String, p: Row) => {
-    val getEvent =
-      (evt: String, subEvt: String) => subEvt.capitalize + evt
+  val splitEvent = (evtType: String, payload: Row) => {
+    val getEvent = (evt: String, subEvt: String) => subEvt.capitalize + evt
 
     val refTypeEvents = Set("CreateEvent", "DeleteEvent")
-    val actionEvents = Set("IssuesEvent", "MembershipEvent", "PullRequestEvent",
-      "PullRequestReviewComment", "RepositoryEvent")
+    val actionEvents = Set("IssuesEvent", "PullRequestEvent", "IssueCommentEvent",
+      "PullRequestReviewCommentEvent", "RepositoryEvent")
 
-    t match {
+    evtType match {
       case s if refTypeEvents.contains(s) =>
-        getEvent(s, p.getAs[String]("ref_type"))
+        getEvent(s, payload.getAs[String]("ref_type"))
       case s if actionEvents.contains(s) =>
-        getEvent(s, p.getAs[String]("action"))
+        getEvent(s, payload.getAs[String]("action"))
       case "WatchEvent" => "StarEvent"
       case other => other
     }
