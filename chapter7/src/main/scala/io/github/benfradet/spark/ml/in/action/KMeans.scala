@@ -40,13 +40,19 @@ object KMeans {
         .setMaxIter(20)
         .setTol(1e-4)
 
-      val model = kmeans.fit(formattedUserActions)
+      val kmeansModel = kmeans.fit(formattedUserActions)
 
-      val wsse = model.computeCost(formattedUserActions)
-      println(s"Within set sum of squared errors for $k clusters = $wsse")
+      val wcss = kmeansModel.computeCost(formattedUserActions)
+      println(s"Within-cluster sum of squares for $k clusters = $wcss")
 
       println("Cluster centers:")
-      model.clusterCenters.foreach(println)
+      kmeansModel.clusterCenters.foreach(println)
+
+      val userActionsWithCenters = kmeansModel
+        .transform(formattedUserActions)
+        .select("features", "prediction")
+      userActionsWithCenters.printSchema()
+      userActionsWithCenters.show(5, truncate = false)
     }
 
     spark.stop()
