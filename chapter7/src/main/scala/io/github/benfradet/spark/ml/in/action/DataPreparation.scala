@@ -3,6 +3,7 @@ package io.github.benfradet.spark.ml.in.action
 import org.apache.spark.sql.{SparkSession, Row, SaveMode}
 import org.apache.spark.sql.functions._
 
+/** This is the code related to the "Preparing the data" section of chapter 7. */
 object DataPreparation {
   def main(args: Array[String]): Unit = {
     if (args.length < 2) {
