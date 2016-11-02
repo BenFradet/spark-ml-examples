@@ -38,6 +38,10 @@ lazy val ml = project.in(file("."))
   .settings(buildSettings)
   .aggregate(chapter7)
 
+lazy val chapter2 = project
+  .settings(moduleName := "chapter2")
+  .settings(buildSettings)
+
 lazy val chapter7 = project
   .settings(moduleName := "chapter7")
   .settings(buildSettings)
