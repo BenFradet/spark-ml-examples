@@ -36,8 +36,7 @@ object Titanic {
     titanicTrain.where("Fare").show()
 
     val avgAge = titanicTrain.select(avg($"Age")).first().getDouble(0)
-    val avgFare = titanicTrain.select(avg($"Fare")).first().getDouble(0)
-    val imputedMap = Map("Age" -> avgAge, "Fare" -> avgFare)
+    val imputedMap = Map("Age" -> avgAge)
     val imputedTitanicTrain = titanicTrain.na.fill(imputedMap)
 
     val categoricalCols = Seq("Pclass", "Sex", "Embarked")
@@ -69,10 +68,11 @@ object Titanic {
       .option("header", "true")
       .option("inferSchema", "true")
       .load(testFilePath)
+      .cache()
     titanicTest.printSchema()
     titanicTest.show(5, truncate = false)
-    println(titanicTest.where($"Age".isNull).count())
-    println(titanicTest.where($"Fare".isNull).count())
+    titanicTest.describe("Age").show()
+    titanicTest.describe("Fare").show()
 
     val imputedTitanicTest = titanicTest.na.fill(imputedMap)
 
