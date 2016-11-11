@@ -29,10 +29,11 @@ object Titanic {
       .option("inferSchema", "true")
       .load(trainFilePath)
       .withColumn("Survived", $"Survived".cast(DoubleType))
+      .cache()
     titanicTrain.printSchema()
     titanicTrain.show(5, truncate = false)
-    println(titanicTrain.where($"Age".isNull).count())
-    println(titanicTrain.where($"Fare".isNull).count())
+    titanicTrain.describe("Age").show()
+    titanicTrain.where("Fare").show()
 
     val avgAge = titanicTrain.select(avg($"Age")).first().getDouble(0)
     val avgFare = titanicTrain.select(avg($"Fare")).first().getDouble(0)
