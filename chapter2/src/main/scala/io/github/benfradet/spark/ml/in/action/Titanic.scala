@@ -33,23 +33,23 @@ object Titanic {
     titanicTrain.printSchema()
     titanicTrain.show(5, truncate = false)
     titanicTrain.describe("Age").show()
-    titanicTrain.where("Fare").show()
+    titanicTrain.describe("Fare").show()
 
-    val avgAge = titanicTrain.select(avg($"Age")).first().getDouble(0)
-    val imputedMap = Map("Age" -> avgAge)
-    val imputedTitanicTrain = titanicTrain.na.fill(imputedMap)
+    val avgAge = titanicTrain.select(avg("Age")).first().getDouble(0)
+    val imputedTrainMap = Map("Age" -> avgAge)
+    val imputedTitanicTrain = titanicTrain.na.fill(imputedTrainMap)
 
-    val categoricalCols = Seq("Pclass", "Sex", "Embarked")
-    val indexers = categoricalCols.map { colName =>
+    val stringCols = Seq("Sex", "Embarked")
+    val indexers = stringCols.map { colName =>
       new StringIndexer()
         .setInputCol(colName)
         .setOutputCol(colName + "Indexed")
     }
 
-    val numericalCols = Seq("Age", "SibSp", "Parch", "Fare")
+    val numericCols = Seq("Age", "SibSp", "Parch", "Fare", "Pclass")
     val featuresCol = "features"
     val assembler = new VectorAssembler()
-      .setInputCols(Array(numericalCols ++ categoricalCols.map(_ + "Indexed"): _*))
+      .setInputCols((numericCols ++ stringCols.map(_ + "Indexed")).toArray)
       .setOutputCol(featuresCol)
 
     val labelCol = "Survived"
@@ -57,7 +57,7 @@ object Titanic {
       .setLabelCol(labelCol)
       .setFeaturesCol(featuresCol)
 
-    val pipeline = new Pipeline().setStages(Array(indexers :+ assembler :+ decisionTree: _*))
+    val pipeline = new Pipeline().setStages((indexers :+ assembler :+ decisionTree).toArray)
 
     val model = pipeline.fit(imputedTitanicTrain)
 
@@ -74,7 +74,9 @@ object Titanic {
     titanicTest.describe("Age").show()
     titanicTest.describe("Fare").show()
 
-    val imputedTitanicTest = titanicTest.na.fill(imputedMap)
+    val avgFare = titanicTrain.select(avg("Fare")).first().getDouble(0)
+    val imputedTestMap = imputedTrainMap + ("Fare" -> avgFare)
+    val imputedTitanicTest = titanicTest.na.fill(imputedTestMap)
 
     val predictions = model.transform(imputedTitanicTest)
 
