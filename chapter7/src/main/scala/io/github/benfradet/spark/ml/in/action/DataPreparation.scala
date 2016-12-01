@@ -39,9 +39,10 @@ object DataPreparation {
     pivotedEvents.printSchema()
     pivotedEvents.show(5, truncate = false)
 
+    val userActions = pivotedEvents.drop("username")
+
     val outputPath = args(1)
-    pivotedEvents
-      .drop("username")
+    userActions
       .write
       .format("csv")
       .option("header", "true")
