@@ -31,14 +31,9 @@ object DataPreparation {
     projectedEvents.printSchema()
     projectedEvents.show(5, truncate = false)
 
-    val distinctEventTypes = projectedEvents
-      .select("type")
-      .distinct()
-      .map(_.getString(0))
-      .collect()
     val pivotedEvents = projectedEvents
       .groupBy("username")
-      .pivot("type", distinctEventTypes)
+      .pivot("type")
       .sum("count")
       .na.fill(0L)
     pivotedEvents.printSchema()
