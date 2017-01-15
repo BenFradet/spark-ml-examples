@@ -8,7 +8,7 @@ import org.apache.spark.sql.SparkSession
  * This is the code related to the "Building our pipeline naively" and "Tuning our pipeline"
  * sections of chapter 7.
  */
-object KMeans {
+object GitHubKMeans {
   def main(args: Array[String]): Unit = {
     if (args.length < 1) {
       System.err.println("Usage: KMeans <input file>")

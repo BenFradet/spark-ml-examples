@@ -19,8 +19,8 @@ object DataPreparation {
 
     val inputPath = args(0)
     val events = spark.read.json(inputPath)
-    events.printSchema()
-    events.show(5, truncate = false)
+    //events.printSchema()
+    //events.show(5, truncate = false)
 
     val splitEventUDF = udf(splitEvent)
     val projectedEvents = events.select(
@@ -28,21 +28,22 @@ object DataPreparation {
       splitEventUDF($"type", $"payload").alias("type"),
       lit(1L).alias("count")
     )
-    projectedEvents.printSchema()
-    projectedEvents.show(5, truncate = false)
+    //projectedEvents.printSchema()
+    //projectedEvents.show(5, truncate = false)
 
     val pivotedEvents = projectedEvents
       .groupBy("username")
       .pivot("type")
       .sum("count")
       .na.fill(0L)
-    pivotedEvents.printSchema()
-    pivotedEvents.show(5, truncate = false)
+    //pivotedEvents.printSchema()
+    //pivotedEvents.show(5, truncate = false)
 
     val userActions = pivotedEvents.drop("username")
 
     val outputPath = args(1)
     userActions
+      .coalesce(1)
       .write
       .format("csv")
       .option("header", "true")
