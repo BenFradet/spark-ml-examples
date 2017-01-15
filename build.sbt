@@ -12,12 +12,6 @@ lazy val buildSettings = Seq(
   scalacOptions ++= compilerOptions
 )
 
-libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core",
-  "org.apache.spark" %% "spark-mllib",
-  "org.apache.spark" %% "spark-sql"
-).map(_ % sparkVersion % "provided")
-
 lazy val compilerOptions = Seq(
   "-deprecation",
   "-encoding", "UTF-8",
@@ -34,9 +28,9 @@ lazy val compilerOptions = Seq(
 )
 
 lazy val ml = project.in(file("."))
-  .settings(moduleName := "spark-ml")
+  .settings(moduleName := "spark-ml-in-action")
   .settings(buildSettings)
-  .aggregate(chapter7)
+  .aggregate(chapter2, chapter7)
 
 lazy val chapter2 = project
   .settings(moduleName := "chapter2")
