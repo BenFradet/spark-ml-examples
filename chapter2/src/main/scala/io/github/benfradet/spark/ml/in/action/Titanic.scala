@@ -36,7 +36,7 @@ object Titanic {
     //titanicTrain.describe("Fare").show()
 
     val avgAge = titanicTrain.select(avg("Age")).first().getDouble(0)
-    val imputedTrainMap = Map("Age" -> avgAge)
+    val imputedTrainMap = Map[String, Any]("Age" -> avgAge, "Embarked" -> "S")
     val imputedTitanicTrain = titanicTrain.na.fill(imputedTrainMap)
 
     val stringCols = Seq("Sex", "Embarked")
