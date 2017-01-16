@@ -1,4 +1,4 @@
-lazy val sparkVersion = "2.0.1"
+lazy val sparkVersion = "2.1.0"
 
 lazy val buildSettings = Seq(
   organization := "io.github.benfradet",
