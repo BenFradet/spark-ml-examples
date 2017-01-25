@@ -34,7 +34,15 @@ object DataPreparation {
     //projectedIssues.printSchema()
     //projectedIssues.show(5, truncate = false)
 
-    // Consider only the bug, enhancement and question default labels
+    // Consider only the bug, enhancement and question default labels because of
+    //import org.apache.spark.sql.functions.desc
+    //projectedIssues
+    //  .as[GHIssue]
+    //  .flatMap(_.labels.map(_.name))
+    //  .groupBy("value")
+    //  .count()
+    //  .orderBy(desc("count"))
+    //  .show(5)
     val possibleLabels = Set("enhancement", "bug", "question")
     val issues = projectedIssues
       .as[GHIssue]
