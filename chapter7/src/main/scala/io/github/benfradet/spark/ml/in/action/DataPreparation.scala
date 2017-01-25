@@ -45,9 +45,8 @@ object DataPreparation {
     userActions
       .coalesce(1)
       .write
-      .format("csv")
       .option("header", "true")
-      .save(outputPath)
+      .csv(outputPath)
 
     spark.stop()
   }
