@@ -24,10 +24,9 @@ object Titanic {
     val trainFilePath = args(0)
     val titanicTrain = spark
       .read
-      .format("csv")
       .option("header", "true")
       .option("inferSchema", "true")
-      .load(trainFilePath)
+      .csv(trainFilePath)
       .withColumn("Survived", $"Survived".cast(DoubleType))
       .cache()
     //titanicTrain.printSchema()
@@ -64,10 +63,9 @@ object Titanic {
     val testFilePath = args(1)
     val titanicTest = spark
       .read
-      .format("csv")
       .option("header", "true")
       .option("inferSchema", "true")
-      .load(testFilePath)
+      .csv(testFilePath)
       .cache()
     //titanicTest.printSchema()
     //titanicTest.show(5, truncate = false)
@@ -85,9 +83,8 @@ object Titanic {
       .select($"PassengerId", $"prediction".cast(IntegerType).alias("Survived"))
       .coalesce(1)
       .write
-      .format("csv")
       .option("header", "true")
-      .save(outputPath)
+      .csv(outputPath)
 
     spark.stop()
   }
