@@ -57,11 +57,12 @@ object GitHubIssueClassifier {
       .setLabelCol(idxdLabelCol)
       .setFeaturesCol("features")
       .setMaxBins(3)
-    //dtc.explainParams
+    //dtc.explainParams()
     val indexToLabel = new IndexToString()
       .setInputCol("prediction")
       .setOutputCol("predictedLabel")
       .setLabels(labelIndexer.labels)
+    //indexToLabel.explainParams()
 
     val pipeline = new Pipeline()
       .setStages(Array(labelIndexer, tokenizer, remover, hashingTF, idf, dtc, indexToLabel))
