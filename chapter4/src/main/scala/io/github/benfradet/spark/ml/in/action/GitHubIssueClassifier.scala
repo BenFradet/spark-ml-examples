@@ -52,6 +52,7 @@ object GitHubIssueClassifier {
     val idf = new IDF()
       .setInputCol("hashed_words")
       .setOutputCol("features")
+      .setMinDocFreq(2)
     //idf.explainParams()
     val dtc = new DecisionTreeClassifier()
       .setLabelCol(idxdLabelCol)
