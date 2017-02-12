@@ -47,7 +47,7 @@ object GitHubIssueClassifier {
     val hashingTF = new HashingTF()
       .setInputCol("filtered_words")
       .setOutputCol("hashed_words")
-      .setNumFeatures(25000)
+      .setNumFeatures(32768)
     //hashingTF.explainParams()
     val idf = new IDF()
       .setInputCol("hashed_words")

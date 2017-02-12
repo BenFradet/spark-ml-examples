@@ -58,6 +58,7 @@ object DataPreparation {
           .filter(possibleLabels.contains)
         labels.map(n => Issue(i.text.replaceAll("[\n\r]|```.*```", " "), n))
       }
+    //isues.show(5)
     //issues.groupBy("label").count().show()
 
     val outputPath = args(1)
