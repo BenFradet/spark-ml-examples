@@ -56,14 +56,13 @@ object DataPreparation {
         val labels = i.labels
           .map(_.name)
           .filter(possibleLabels.contains)
-        labels.map(n => Issue(i.text.replaceAll("[\n\r]|```.*```", " "), n))
+        labels.map(n => Issue(i.text.replaceAll("[\n\r]", " "), n))
       }
     //isues.show(5)
     //issues.groupBy("label").count().show()
 
     val outputPath = args(1)
     issues
-      .coalesce(1)
       .write
       .json(outputPath)
 

@@ -47,7 +47,7 @@ object GitHubIssueClassifier {
     val hashingTF = new HashingTF()
       .setInputCol("filtered_words")
       .setOutputCol("hashed_words")
-      .setNumFeatures(32768)
+      .setNumFeatures(16384)
     //hashingTF.explainParams()
     val idf = new IDF()
       .setInputCol("hashed_words")
@@ -57,7 +57,7 @@ object GitHubIssueClassifier {
     val dtc = new DecisionTreeClassifier()
       .setLabelCol(idxdLabelCol)
       .setFeaturesCol("features")
-      .setMaxBins(3)
+      .setMaxDepth(12)
     //dtc.explainParams()
     val indexToLabel = new IndexToString()
       .setInputCol("prediction")
@@ -73,14 +73,14 @@ object GitHubIssueClassifier {
       .setMetricName("accuracy")
 
     val paramGrid = new ParamGridBuilder()
-      .addGrid(dtc.maxDepth, Array(3, 5))
+      .addGrid(dtc.maxBins, Array(5, 7))
       .build()
 
     val cv = new CrossValidator()
       .setEstimator(pipeline)
       .setEvaluator(evaluator)
       .setEstimatorParamMaps(paramGrid)
-      .setNumFolds(3)
+      .setNumFolds(5)
 
     val cvModel = cv.fit(training)
 
