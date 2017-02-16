@@ -24,4 +24,4 @@ spark-submit \
 ```
 
 You can have a look at the submit scripts in the `resources/` folder for each
-chapter ([chapter 4 for example](chapter4/src/main/resources/).
+chapter ([chapter 4 for example](chapter4/src/main/resources/)).
