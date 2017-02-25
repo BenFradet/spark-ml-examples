@@ -1,7 +1,7 @@
 package io.github.benfradet.spark.ml.in.action
 
-import org.apache.spark.ml.Pipeline
-import org.apache.spark.ml.classification.DecisionTreeClassifier
+import org.apache.spark.ml.{Pipeline, PipelineModel}
+import org.apache.spark.ml.classification.{DecisionTreeClassificationModel, DecisionTreeClassifier}
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.feature._
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
@@ -99,6 +99,13 @@ object GitHubIssueClassifier {
       .maxBy(_._2)
       ._1
     println(s"Best params:\n$bestEstimatorParamMap")
+
+    val dtcModel = cvModel
+      .bestModel
+      .asInstanceOf[PipelineModel]
+      .stages(5)
+      .asInstanceOf[DecisionTreeClassificationModel]
+    println(s"Decision tree:\n${dtcModel.toDebugString}")
 
     spark.stop()
   }
