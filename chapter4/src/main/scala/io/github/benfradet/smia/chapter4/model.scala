@@ -1,4 +1,4 @@
-package io.github.benfradet.spark.ml.in.action
+package io.github.benfradet.smia.chapter4
 
 /** Model case classes for chapter 4. */
 object model {

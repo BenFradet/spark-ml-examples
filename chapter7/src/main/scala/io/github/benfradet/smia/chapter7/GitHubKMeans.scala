@@ -1,4 +1,4 @@
-package io.github.benfradet.spark.ml.in.action
+package io.github.benfradet.smia.chapter7
 
 import org.apache.spark.ml.clustering.KMeans
 import org.apache.spark.ml.feature.VectorAssembler

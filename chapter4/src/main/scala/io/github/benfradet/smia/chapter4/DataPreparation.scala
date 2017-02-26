@@ -1,6 +1,6 @@
-package io.github.benfradet.spark.ml.in.action
+package io.github.benfradet.smia.chapter4
 
-import io.github.benfradet.spark.ml.in.action.model._
+import io.github.benfradet.smia.chapter4.model._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{concat, lit}
 

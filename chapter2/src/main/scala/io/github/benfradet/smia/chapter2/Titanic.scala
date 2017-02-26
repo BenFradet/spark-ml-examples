@@ -1,4 +1,4 @@
-package io.github.benfradet.spark.ml.in.action
+package io.github.benfradet.smia.chapter2
 
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
