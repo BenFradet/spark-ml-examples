@@ -30,7 +30,7 @@ lazy val compilerOptions = Seq(
 lazy val ml = project.in(file("."))
   .settings(moduleName := "spark-ml-in-action")
   .settings(buildSettings)
-  .aggregate(chapter2, chapter4, chapter7)
+  .aggregate(chapter2, chapter4, chapter5, chapter7)
 
 lazy val chapter2 = project
   .settings(moduleName := "chapter2")
@@ -38,6 +38,10 @@ lazy val chapter2 = project
 
 lazy val chapter4 = project
   .settings(moduleName := "chapter4")
+  .settings(buildSettings)
+
+lazy val chapter5 = project
+  .settings(moduleName := "chapter5")
   .settings(buildSettings)
 
 lazy val chapter7 = project
