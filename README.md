@@ -1,4 +1,6 @@
-### Spark ML in action [![Build Status](https://travis-ci.org/BenFradet/spark-ml-in-action.svg?branch=master)](https://travis-ci.org/BenFradet/spark-ml-in-action)
+### Spark ML examples
+
+[![Build Status](https://travis-ci.org/BenFradet/spark-ml-in-action.svg?branch=master)](https://travis-ci.org/BenFradet/spark-ml-in-action)
 
 #### Building a chapter
 
